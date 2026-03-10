@@ -1,0 +1,417 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>GearHouse Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d7ff2",
+                        "primary-glow": "#0d7ff280",
+                        "background-dark": "#0B0C10",
+                        "surface-dark": "#111418",
+                        "surface-light": "#1f2937",
+                        "neon-green": "#0bda5b",
+                        "neon-red": "#ff2e2e",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px rgba(13, 127, 242, 0.5), 0 0 20px rgba(13, 127, 242, 0.3)',
+                        'neon-sm': '0 0 5px rgba(13, 127, 242, 0.5)',
+                        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+                    },
+                    backgroundImage: {
+                        'cyber-grid': "radial-gradient(circle at 50% 50%, rgba(13, 127, 242, 0.05) 0%, transparent 50%), linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .02) 25%, rgba(255, 255, 255, .02) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .02) 75%, rgba(255, 255, 255, .02) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .02) 25%, rgba(255, 255, 255, .02) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .02) 75%, rgba(255, 255, 255, .02) 76%, transparent 77%, transparent)",
+                    },
+                    backgroundSize: {
+                        'cyber-grid': '100% 100%, 50px 50px, 50px 50px'
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111418;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #283039;
+            border-radius: 4px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #0d7ff2;
+            }
+
+        .glass-panel {
+            background: rgba(17, 20, 24, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-white font-display overflow-hidden selection:bg-primary selection:text-white">
+    <div class="flex h-screen w-full flex-col">
+        <div class="flex flex-1 overflow-hidden">
+            <aside class="hidden md:flex w-64 flex-col border-r border-white/5 bg-[#0f1216] overflow-y-auto z-40">
+                <div class="flex flex-col gap-1 p-4">
+                    <!-- User Profile Section -->
+                    <div class="mb-6 p-3 rounded-xl bg-surface-light/30 border border-white/5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="relative group/avatar cursor-pointer">
+                                <div class="size-10 rounded-full bg-surface-light border-2 border-primary/50 shadow-neon-sm group-hover/avatar:border-primary transition-all flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-gray-300 group-hover/avatar:text-white text-[28px]">account_circle</span>
+                                </div>
+                                <div class="absolute bottom-0 right-0 size-2.5 rounded-full bg-green-500 border border-black"></div>
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-sm font-bold leading-none text-white truncate">@ViewBag.UserName</p>
+                                <p class="text-[10px] text-primary font-medium tracking-wide mt-1">QUẢN TRỊ VIÊN</p>
+                            </div>
+                        </div>
+                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                            <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/30 px-3 py-1.5 text-xs font-bold text-primary transition-all hover:shadow-neon-sm">
+                                <span class="material-symbols-outlined text-[16px]">logout</span>
+                                <span>ĐĂNG XUẤT</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mb-6">
+                        <p class="px-3 text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Tổng Quan</p>
+                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group @(ViewBag.ActiveTab == "revenue" ? "bg-primary/10 border border-primary/20 text-white shadow-neon-sm" : "text-gray-400 hover:bg-white/5 hover:text-white border border-transparent")" href="@Url.Action("Dashboard", "Dashboard", new { tab = "revenue" })">
+                            <span class="material-symbols-outlined transition-transform duration-300 group-hover:scale-110 @(ViewBag.ActiveTab == "revenue" ? "text-primary animate-pulse" : "text-gray-500 group-hover:text-primary")">dashboard</span>
+                            <span class="text-sm font-medium">Bảng Điều Khiển</span>
+                        </a>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between px-3 mb-2 cursor-pointer group">
+                            <p class="text-xs font-bold uppercase tracking-wider text-gray-500 group-hover:text-primary transition-colors">Quản Lý</p>
+                            <span class="material-symbols-outlined text-[16px] text-gray-500 group-hover:text-primary transition-transform group-hover:rotate-180">expand_less</span>
+                        </div>
+                        <div class="flex flex-col gap-1 pl-2 border-l border-white/5 ml-3">
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all group @(ViewBag.ActiveTab == "product" ? "bg-white/5 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white")" href="@Url.Action("Dashboard", "Dashboard", new { tab = "product" })">
+                                <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:scale-110 group-hover:text-blue-400">inventory_2</span>
+                                <span class="text-sm">Sản Phẩm</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all group @(ViewBag.ActiveTab == "category" ? "bg-white/5 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white")" href="@Url.Action("Dashboard", "Dashboard", new { tab = "category" })">
+                                <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:scale-110 group-hover:text-purple-400">category</span>
+                                <span class="text-sm">Danh Mục</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all group @(ViewBag.ActiveTab == "brand" ? "bg-white/5 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white")" href="@Url.Action("Dashboard", "Dashboard", new { tab = "brand" })">
+                                <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:scale-110 group-hover:text-yellow-400">label</span>
+                                <span class="text-sm">Thương Hiệu</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all group @(ViewBag.ActiveTab == "promotion" ? "bg-white/5 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white")" href="@Url.Action("Dashboard", "Dashboard", new { tab = "promotion" })">
+                                <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:scale-110 group-hover:text-pink-400">campaign</span>
+                                <span class="text-sm">Khuyến Mãi</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all group @(ViewBag.ActiveTab == "order" ? "bg-white/5 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white")" href="@Url.Action("Dashboard", "Dashboard", new { tab = "order" })">
+                                <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:scale-110 group-hover:text-green-400">shopping_cart</span>
+                                <span class="text-sm">Đơn Hàng</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all group @(ViewBag.ActiveTab == "user" ? "bg-white/5 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white")" href="@Url.Action("Dashboard", "Dashboard", new { tab = "user" })">
+                                <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:scale-110 group-hover:text-red-400">badge</span>
+                                <span class="text-sm">Nhân Viên</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all group @(ViewBag.ActiveTab == "chat" ? "bg-white/5 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white")" href="@Url.Action("Dashboard", "Dashboard", new { tab = "chat" })">
+                                <div class="relative">
+                                    <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:scale-110 group-hover:text-cyan-400">chat</span>
+                                    <span id="chat-badge" class="absolute -top-2 -right-2 h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-neon-red hidden"></span>
+                                </div>
+                                <span class="text-sm">Hỗ Trợ Trực Tuyến</span>
+                            </a>
+                        </div>
+                    <div class="mt-auto pt-8">
+                        <div class="rounded-xl border border-white/5 bg-gradient-to-br from-surface-light/40 to-surface-light/10 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-gray-400">TẢI MÁY CHỦ</span>
+                                <span class="flex size-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></span>
+                            </div>
+                            <div class="text-2xl font-bold text-white mb-1">24%</div>
+                            <div class="h-1 w-full bg-black/50 rounded-full overflow-hidden">
+                                <div class="h-full bg-primary w-[24%] shadow-neon-sm"></div>
+                            </div>
+                            <p class="text-[10px] text-gray-500 mt-2">Hiệu suất tối ưu</p>
+                        </div>
+                    </div>
+                    </div>
+                    </div>
+            </aside>
+            <main class="flex-1 overflow-y-auto bg-background-dark bg-cyber-grid bg-fixed relative">
+                <div class="container mx-auto max-w-7xl p-6 lg:p-8" id="dashboard-content">
+                    <!-- Initial Skeleton Loader -->
+                    <div class="animate-pulse space-y-8">
+                        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                            <div class="w-1/3 h-10 bg-surface-light/30 rounded-lg"></div>
+                            <div class="w-40 h-10 bg-surface-light/30 rounded-lg"></div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                            <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                            <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 h-96 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                            <div class="lg:col-span-1 h-96 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="activeTab" value="@ViewBag.ActiveTab" />
+
+                <script>
+                    const skeletonHTML = `
+                        <div class="animate-pulse space-y-8">
+                            <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                                <div class="w-1/3 h-10 bg-surface-light/30 rounded-lg"></div>
+                                <div class="w-40 h-10 bg-surface-light/30 rounded-lg"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                                <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                                <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                            </div>
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div class="lg:col-span-2 h-96 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                                <div class="lg:col-span-1 h-96 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                            </div>
+                        </div>
+                    `;
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const activeTab = document.getElementById('activeTab').value || 'revenue';
+                        loadTabContent(activeTab);
+
+                        // Poll for unread messages
+                        function pollUnreadCount() {
+                            fetch('@Url.Action("GetUnreadCount", "Chat")')
+                                .then(response => response.json())
+                                .then(data => {
+                                    const badge = document.getElementById('chat-badge');
+                                    if (data.count > 0) {
+                                        badge.textContent = data.count > 99 ? '99+' : data.count;
+                                        badge.classList.remove('hidden');
+                                        badge.classList.add('flex');
+                                    } else {
+                                        badge.classList.add('hidden');
+                                        badge.classList.remove('flex');
+                                    }
+                                })
+                                .catch(err => console.error(err));
+                        }
+                        setInterval(pollUnreadCount, 5000);
+                        pollUnreadCount();
+                    });
+
+                    function loadTabContent(tab) {
+                        const container = document.getElementById('dashboard-content');
+                        
+                        // Update Sidebar Active State
+                        document.querySelectorAll('aside a').forEach(a => {
+                            const onClick = a.getAttribute('onclick');
+                            if(onClick && onClick.includes(`'${tab}'`)) {
+                                a.classList.add('bg-primary/10', 'text-primary', 'border-primary/50');
+                                a.classList.remove('text-slate-400', 'hover:bg-white/5', 'hover:text-white');
+                            } else {
+                                a.classList.remove('bg-primary/10', 'text-primary', 'border-primary/50');
+                                a.classList.add('text-slate-400', 'hover:bg-white/5', 'hover:text-white');
+                            }
+                        });
+
+                        let url = '';
+                        switch(tab) {
+                            case 'revenue': url = '@Url.Action("Revenue", "Dashboard")'; break;
+                            case 'product': url = '@Url.Action("ProductIndex", "Dashboard")'; break;
+                            case 'category': url = '@Url.Action("CategoryIndex", "Dashboard")'; break;
+                            case 'brand': url = '@Url.Action("BrandIndex", "Dashboard")'; break;
+                            case 'promotion': url = '@Url.Action("PromotionIndex", "Dashboard")'; break;
+                            case 'order': url = '@Url.Action("OrderIndex", "Dashboard")'; break;
+                            case 'user': url = '@Url.Action("UserIndex", "Dashboard")'; break;
+                            case 'chat': 
+                                url = '@Url.Action("Dashboard", "Chat")'; 
+                                const badge = document.getElementById('chat-badge');
+                                if(badge) {
+                                    badge.classList.add('hidden');
+                                    badge.classList.remove('flex');
+                                }
+                                break;
+                            default: url = '@Url.Action("Revenue", "Dashboard")';
+                        }
+
+                        const skeletonHTML = `
+                            <div class="animate-pulse space-y-8 p-6">
+                                <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                                    <div class="w-1/3 h-10 bg-surface-light/30 rounded-lg"></div>
+                                    <div class="w-40 h-10 bg-surface-light/30 rounded-lg"></div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                                    <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                                    <div class="h-32 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    <div class="lg:col-span-2 h-96 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                                    <div class="lg:col-span-1 h-96 bg-surface-light/30 rounded-xl border border-white/5"></div>
+                                </div>
+                            </div>`;
+
+                        // Add fade out effect before loading
+                        if (typeof gsap !== 'undefined') {
+                            gsap.to(container, { opacity: 0, duration: 0.2, onComplete: () => {
+                                // Show Skeleton
+                                container.innerHTML = skeletonHTML;
+                                container.style.opacity = 1;
+
+                                fetch(url, {
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    }
+                                })
+                                .then(response => response.text())
+                                .then(html => {
+                                    // Fade out skeleton
+                                    gsap.to(container, { opacity: 0, duration: 0.1, onComplete: () => {
+                                        container.innerHTML = html;
+                                        
+                                        // Re-execute scripts
+                                        container.querySelectorAll('script').forEach(oldScript => {
+                                            const newScript = document.createElement('script');
+                                            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                                            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                                            oldScript.parentNode.replaceChild(newScript, oldScript);
+                                        });
+                                        
+                                        // Animate content in
+                                        gsap.to(container, { opacity: 1, duration: 0.4 });
+                                        
+                                        // Initialize specific element animations
+                                        if (typeof initDashboardAnimations === 'function') {
+                                            initDashboardAnimations();
+                                        }
+                                    }});
+                                })
+                                .catch(error => {
+                                    console.error('Error loading tab:', error);
+                                    container.innerHTML = '<div class="text-red-500 p-4">Lỗi tải nội dung.</div>';
+                                    gsap.to(container, { opacity: 1, duration: 0.2 });
+                                });
+                            }});
+                        } else {
+                            // Fallback if GSAP is not loaded
+                             container.innerHTML = skeletonHTML;
+                             fetch(url, {
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(response => response.text())
+                            .then(html => {
+                                container.innerHTML = html;
+                                container.querySelectorAll('script').forEach(oldScript => {
+                                    const newScript = document.createElement('script');
+                                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                                });
+                                if (typeof initDashboardAnimations === 'function') {
+                                    initDashboardAnimations();
+                                }
+                            });
+                        }
+                    }
+
+                    // Global Animation Controller
+                    function initDashboardAnimations() {
+                        // 1. Staggered List/Table Entry
+                        const rows = document.querySelectorAll("tbody tr");
+                        if (rows.length > 0) {
+                            gsap.fromTo(rows, 
+                                { y: 20, opacity: 0 },
+                                { y: 0, opacity: 1, duration: 0.4, stagger: 0.05, ease: "power2.out", clearProps: "transform" }
+                            );
+                        }
+
+                        // 2. Fade Up Elements (Cards, Headers)
+                        // Looks for .gsap-fade-up class
+                        const fadeElements = document.querySelectorAll(".gsap-fade-up, .stat-card, .glass-panel");
+                        if (fadeElements.length > 0) {
+                            gsap.fromTo(fadeElements,
+                                { y: 30, opacity: 0 },
+                                { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "back.out(1.2)", clearProps: "transform" }
+                            );
+                        }
+
+                        // 3. Progress Bars
+                        gsap.utils.toArray(".gsap-bar, .progress-bar-fill").forEach(bar => {
+                            // If it has a style width, animate to it
+                            const targetWidth = bar.style.width || bar.getAttribute("data-width");
+                            if (targetWidth) {
+                                gsap.fromTo(bar, 
+                                    { width: 0 }, 
+                                    { width: targetWidth, duration: 1.2, ease: "power2.out" }
+                                );
+                            }
+                        });
+
+                        // 4. Number Counters
+                        // Elements with .gsap-counter class will animate their inner text
+                        document.querySelectorAll(".gsap-counter").forEach(el => {
+                            const rawText = el.innerText.trim();
+                            // Handle Vietnamese currency format: remove dots, replace comma with dot for parsing
+                            // Example: 319.500.000 -> 319500000
+                            let cleanText = rawText.replace(/\./g, "").replace(/,/g, ".");
+                            // Remove non-numeric characters except dot and minus
+                            cleanText = cleanText.replace(/[^0-9.-]+/g, "");
+                            
+                            const numericValue = parseFloat(cleanText);
+                            
+                            if (!isNaN(numericValue)) {
+                                const isCurrency = rawText.includes("₫") || rawText.includes("$") || rawText.includes("VNĐ");
+                                const obj = { val: 0 };
+                                gsap.to(obj, {
+                                    val: numericValue,
+                                    duration: 1.5,
+                                    ease: "power2.out",
+                                    onUpdate: function() {
+                                        if (isCurrency) {
+                                            // Format as Vietnamese currency (e.g., 319.500.000)
+                                            el.innerText = Math.floor(obj.val).toLocaleString('vi-VN') + "₫";
+                                        } else {
+                                            el.innerText = Math.floor(obj.val).toLocaleString('vi-VN');
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                </script>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
